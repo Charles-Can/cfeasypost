@@ -7,6 +7,8 @@ component accessors="true" {
   property name="created_at" type="string";//switch to coldfusion Date
   property name="updated_at" type="string";//switch to coldfusion Date
 
+  variables.static.URL_BASE = 'https://api.easypost.com/v2';
+
 
   private void function init(){
     for( var item IN arguments ){
@@ -15,5 +17,12 @@ component accessors="true" {
       }
     }
   }
+
+  private function serialize(){}
+  private function send( required String method ){}
+  private function parseResult(){}
+
+  public function create(){}
+  public function receive(){}
 
 }
