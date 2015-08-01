@@ -1,4 +1,6 @@
-component {
+component accessors='true'{
+
+  property name="debug" type="boolean" default="false";
 
   import 'easypost.model.*';
 
@@ -14,16 +16,19 @@ component {
   public any function onMissingMethod( string missingMethodName, struct missingMethodArguments ){
     var easypostObj={};
 
-    arguments.missingMethodArguments[ 'apiKey' ] = variables.apiKey;  
+    //inject the apikey into each instance
+    arguments.missingMethodArguments[ 'apiKey' ] = variables.apiKey;
 
     try {
+      //the casing of the missingMethodName needs to be exact in some systems
       easypostObj = new "#arguments.missingMethodName#"( argumentCollection=arguments.missingMethodArguments );
     } catch( any e ){
-      rethrow;
+      if( THIS.getDebug() ) rethrow;
     }
 
     if( StructIsEmpty( easypostObj ) ){
-      throw( message = "#arguments.missingMethodName# Could not be found in Easypost objects." );
+      throw( message = "#arguments.missingMethodName# Could not be found in Easypost objects.
+      Check that your method invokation is spelled correctly or toggle debug mode on Easypost class." );
     }
 
     return easypostObj;
