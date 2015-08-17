@@ -10,7 +10,9 @@ component accessors="true" extends="easypost.model.ABModel" {
   property name="company" type="String";
   property name="phone" type="String";
   property name="email" type="String";
-  property name="residential" type="boolean";
+  property name="residential" type="Boolean";
+
+  variables.urlPart = '/adresses/';
 
   public Address function init(
       String street1 = '',

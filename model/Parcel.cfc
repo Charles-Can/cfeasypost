@@ -2,7 +2,7 @@ component accessors="true" extends="easypost.model.ABModel" {
 
   property name="length" type="Numeric";
   property name="width" type="Numeric";
-  property name="height" type="Nuermic";
+  property name="height" type="Numeric";
   property name="predefined_package" type="String";
   property name="weight" type="Numeric";
 
