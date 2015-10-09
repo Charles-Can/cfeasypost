@@ -9,7 +9,6 @@ component accessors="true" {
 
   variables.static.URL_BASE = 'https://api.easypost.com/v2';
 
-
   private void function init(){
     for( var item IN arguments ){
       if( !isNull( arguments[ item ] ) ){
@@ -31,7 +30,7 @@ component accessors="true" {
     }
 
     //setup name chain
-    baseName = ( LEN( baseName ) ) ? baseName : LCASE( arguments.obj.getObject() );
+    baseName = ( LEN( baseName ) ) ? baseName : LCase( ListLast( getMetaData( arguments.obj ).fullname, '.' ) );
 
     for( var key IN props ){
       if( listContainsNoCase( 'Boolean,String,Numeric', key.type ) ){
@@ -47,7 +46,6 @@ component accessors="true" {
             }
             return parsed;
           };
-          //arrayAppend( payload, handleArray( invoke( arguments.obj, 'get#key.name#' ), baseName & '[#key.name#]' ) );
           payload.addAll( handleArray( invoke( arguments.obj, 'get#key.name#' ), baseName & '[#key.name#]' ) );
         }else{
           payload.addAll( createPayload( invoke( arguments.obj, 'get#key.name#' ), baseName & '[#key.name#]' ) );
@@ -60,20 +58,72 @@ component accessors="true" {
     return payload;
   }
 
-  private function send(
+  private any function send(
+    required String uri,
     required String method,
     required array payload
   ){
 
+    var http = new http();
+
+    http.setUrl( variables.static.URL_BASE & arguments.uri );
+    http.setMethod( arguments.method );
+    http.addParam( type="header", name="Authorization", value="Basic #ToBase64( getApiKey() )#" );
+
+    //body params
+    for( var item IN arguments.payload ){
+      http.addParam( type="URL", name=LCASE( item.name ), value=item.value );
+    }
+
+    return parseResult( http.send().getPrefix() );
   }
 
-  private function parseResult(){}
+  private function parseResult( required Struct request ){
+
+    var body=arguments.request.fileContent;
+    var objects = getObjects();
+
+    if( len( body ) ) body = deserializeJSON( body );
+
+    //inject apiKey
+    body.apiKey = getApiKey();
+
+
+
+
+    return new "#body.object#"( argumentCollection = body );
+  }
 
   public any function create(){
     var method = "POST";
 
-    return createPayload( THIS );
+    return send( variables.urlPart, method, createPayload( THIS ) );
   }
-  public function retrieve(){}
+
+  public any function retrieve(){
+
+
+
+
+    return getObjects();
+  }
+
+  private Array function getObjects(){
+    var objects = [];
+    var path = GetDirectoryFromPath( GetCurrentTemplatePath() );
+    var files = directoryList( path, false, 'name' );
+
+    for( var obj IN files ){
+      arrayAppend(
+        objects,
+        {
+          names = "#LCASE( listFirst( obj, '.' ) )#,#LCASE( replace( listFirst( obj, '.' ), '_', '', 'all' ) )#",
+          comp = listFirst( obj, '.' )
+        }
+      );
+    }
+
+    return objects;
+  }
 
 }

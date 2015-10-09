@@ -12,21 +12,21 @@ component accessors="true" extends="easypost.model.ABModel" {
   property name="email" type="String";
   property name="residential" type="Boolean";
 
-  variables.urlPart = '/adresses/';
+  variables.urlPart = '/addresses/';
 
   public Address function init(
-      String street1 = '',
-      String street2 = '',
-      String city = '',
-      String state = '',
-      String zip = '',
-      String country = '',
-      String name = '',
-      String company = '',
-      String phone = '',
-      String email = '',
-      Boolean residential = false,
-      String object = 'Address'
+    String street1 = '',
+    String street2 = '',
+    String city = '',
+    String state = '',
+    String zip = '',
+    String country = '',
+    String name = '',
+    String company = '',
+    String phone = '',
+    String email = '',
+    Boolean residential = false,
+    String object = 'Address'
   ){
 
     super.init( argumentCollection = arguments );
